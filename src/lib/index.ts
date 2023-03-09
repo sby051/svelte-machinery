@@ -113,10 +113,10 @@ export type ToggleMachine = Readonly<{
 
 /**
  * A utility function to create a toggle machine.
- * @param {boolean} init The initial state of the machine.
+ * @param {boolean} init The initial state of the machine. Defaults to false.
  * @returns {ToggleMachine} The toggle machine.
  */
-export const toggle = (init: boolean): ToggleMachine => {
+export const toggle = (init = false): ToggleMachine => {
 	const { subscribe, set, update } = writable(init);
 
 	return {
@@ -128,28 +128,35 @@ export const toggle = (init: boolean): ToggleMachine => {
 	};
 };
 
+export type ToggleGroupMachine<T extends string> = Readonly<{
+	subscribe: Writable<Record<T, boolean>>["subscribe"];
+	set: (value: Record<T, boolean>) => void;
+	toggle: (key: T) => void;
+	on: (key: T) => void;
+	off: (key: T) => void;
+}>;
+
 /**
- * A utility function to create an array of toggle machines.
- * @param {boolean[]} init The initial states of the machines.
- * @returns {object} The toggle machines.
- * @property {function} subscribe The subscribe function of the machines.
- * @property {function} set The set function of the machines.
- * @property {function} toggle The function to toggle the state of a machine.
- * @property {function} on The function to turn a machine on.
- * @property {function} off The function to turn a machine off.
+ * A utility function to create a toggles machine.
+ * @template T The type of the toggle keys.
+ * @param {Record<T, boolean> | T[]} init The initial state of the machine. If an array is passed, the keys will be set to false, otherwise the keys will be set to the value of the corresponding key.
+ * @returns {ToggleGroupMachine} The toggles machine.
  */
-export const toggles = (init: boolean[]) => {
+export const toggleGroup = <T extends string>(
+	init: Record<T, boolean> | T[]
+): ToggleGroupMachine<T> => {
+	if (Array.isArray(init)) {
+		init = init.reduce((acc, key) => ({ ...acc, [key]: false }), {}) as Record<T, boolean>;
+	}
+
 	const { subscribe, set, update } = writable(init);
 
 	return {
 		subscribe,
 		set,
-		toggle: (index: number) =>
-			update((values) => values.map((value, i) => (i === index ? !value : value))),
-		on: (index: number) =>
-			update((values) => values.map((value, i) => (i === index ? true : value))),
-		off: (index: number) =>
-			update((values) => values.map((value, i) => (i === index ? false : value)))
+		toggle: (key: T) => update((value) => ({ ...value, [key]: !value[key] })),
+		on: (key: T) => update((value) => ({ ...value, [key]: true })),
+		off: (key: T) => update((value) => ({ ...value, [key]: false }))
 	};
 };
 

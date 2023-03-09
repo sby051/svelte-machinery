@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { steps, toggle } from "$lib";
+	import { steps, toggle, toggleGroup } from "$lib";
 
 	type Stage = {
 		id: number;
@@ -21,7 +21,15 @@
 		}
 	]);
 
-	const open = toggle(false);
+	const open = toggle();
+
+	const openGroup = toggleGroup(["one", "two", "three"]);
+
+	const openGroup2 = toggleGroup({
+		one: true,
+		two: false,
+		three: true
+	});
 </script>
 
 <svelte:head>

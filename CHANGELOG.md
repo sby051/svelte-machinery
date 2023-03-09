@@ -1,5 +1,11 @@
 # svelte-machinery
 
+## 1.1.0
+
+### Minor Changes
+
+- Added new generics to toggles; renamed toggles to toggleGroup (BREAKING). toggleGroup now accepts either an array of strings to be used as keys, or an object with keys and corresponding init bools
+
 ## 1.0.1
 
 ### Patch Changes
