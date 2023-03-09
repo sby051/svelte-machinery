@@ -4,12 +4,12 @@ import type { StepMachine, ToggleMachine } from "./lib";
 
 describe("machine() test", () => {
 	type State = "a" | "b" | "c";
-	let steps: StepMachine<State>;
+	let testSteps: StepMachine<State>;
 	let currentState: State;
 
 	beforeEach(() => {
-		steps = steps<State>(["a", "b", "c"], { init: 1 });
-		steps.subscribe((state) => {
+		testSteps = steps<State>(["a", "b", "c"], { init: 1 });
+		testSteps.subscribe((state) => {
 			currentState = state;
 		});
 	});
@@ -19,57 +19,57 @@ describe("machine() test", () => {
 	});
 
 	it("should transition to the next state", () => {
-		steps.next();
+		testSteps.next();
 		expect(currentState).toBe("c");
 	});
 
 	it("should transition to the previous state", () => {
-		steps.prev();
+		testSteps.prev();
 		expect(currentState).toBe("a");
 	});
 
 	it("should not transition to the next state if it's the last state", () => {
-		steps.next();
-		steps.next();
-		steps.next();
+		testSteps.next();
+		testSteps.next();
+		testSteps.next();
 		expect(currentState).toBe("c");
 	});
 
 	it("should not transition to the previous state if it's the first state", () => {
-		steps.prev();
-		steps.prev();
-		steps.prev();
+		testSteps.prev();
+		testSteps.prev();
+		testSteps.prev();
 		expect(currentState).toBe("a");
 	});
 
 	it("should transition to the first state if it's the last state and loop is true", () => {
-		steps = steps(["a", "b", "c"], { init: 2, loop: true });
-		steps.subscribe((state) => {
+		testSteps = steps(["a", "b", "c"], { init: 2, loop: true });
+		testSteps.subscribe((state) => {
 			currentState = state;
 		});
-		steps.next();
+		testSteps.next();
 		expect(currentState).toBe("a");
 	});
 
 	it("should reset to the init state", () => {
-		steps.next();
-		steps.reset();
+		testSteps.next();
+		testSteps.reset();
 		expect(currentState).toBe("b");
 	});
 
 	it("should return the current value", () => {
-		steps.set("b");
-		expect(steps.current).toBe("b");
+		testSteps.set("b");
+		expect(testSteps.current).toBe("b");
 	});
 });
 
 describe("toggle() test", () => {
-	let toggle: ToggleMachine;
+	let testToggle: ToggleMachine;
 	let currentState: boolean;
 
 	beforeEach(() => {
-		toggle = toggle(false);
-		toggle.subscribe((state) => {
+		testToggle = toggle(false);
+		testToggle.subscribe((state) => {
 			currentState = state;
 		});
 	});
@@ -79,17 +79,17 @@ describe("toggle() test", () => {
 	});
 
 	it("should toggle the state", () => {
-		toggle.toggle();
+		testToggle.toggle();
 		expect(currentState).toBe(true);
 	});
 
 	it("should set the state to true", () => {
-		toggle.on();
+		testToggle.on();
 		expect(currentState).toBe(true);
 	});
 
 	it("should set the state to false", () => {
-		toggle.off();
+		testToggle.off();
 		expect(currentState).toBe(false);
 	});
 });

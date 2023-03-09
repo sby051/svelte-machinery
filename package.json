@@ -2,20 +2,22 @@
 	"name": "svelte-machinery",
 	"description": "A collection of state machines for Svelte",
 	"author": "sby051",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
 		"preview": "vite preview",
 		"package": "svelte-kit sync && svelte-package && publint",
-		"prepublishOnly": "npm run package",
+		"publish": "npm publish ./dist --access public",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test": "vitest",
+		"test:once": "vitest --watch=false",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"ci": "npm run format && npm run lint && npm run check && npm run test",
-		"changeset": "changeset"
+		"changeset": "changeset",
+		"changeset:version": "changeset version",
+		"ci": "npm run changeset && npm run format && npm run lint && npm run test:once && npm run package && npm run changeset:version"
 	},
 	"exports": {
 		".": {

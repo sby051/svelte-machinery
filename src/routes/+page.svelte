@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { steps, toggle, validatedSteps } from "$lib";
+	import { steps, toggle } from "$lib";
 
 	type Stage = {
 		id: number;
