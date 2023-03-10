@@ -1,5 +1,17 @@
 # svelte-machinery
 
+## 1.2.1
+
+### Patch Changes
+
+- Added more optimal and thorough testing
+
+## 1.2.0
+
+### Minor Changes
+
+- Added a new README! Should be more clear now.
+
 ## 1.1.0
 
 ### Minor Changes

@@ -2,7 +2,7 @@
 	"name": "svelte-machinery",
 	"description": "A collection of state machines for Svelte",
 	"author": "sby051",
-	"version": "1.1.0",
+	"version": "1.2.1",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
@@ -17,7 +17,7 @@
 		"format": "prettier --plugin-search-dir . --write .",
 		"changeset": "changeset",
 		"changeset:version": "changeset version",
-		"ci": "npm run changeset && npm run format && npm run lint && npm run test:once && npm run package && npm run changeset:version"
+		"ci": "bash ./ci.sh && npm run lint && npm run test:once && npm run package npm run format"
 	},
 	"exports": {
 		".": {

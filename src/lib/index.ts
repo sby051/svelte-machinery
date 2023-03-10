@@ -109,6 +109,7 @@ export type ToggleMachine = Readonly<{
 	toggle: () => void;
 	on: () => void;
 	off: () => void;
+	get current(): boolean;
 }>;
 
 /**
@@ -124,7 +125,12 @@ export const toggle = (init = false): ToggleMachine => {
 		set,
 		toggle: () => update((value) => !value),
 		on: () => set(true),
-		off: () => set(false)
+		off: () => set(false),
+		get current() {
+			let value: boolean;
+			subscribe((v) => (value = v))();
+			return value;
+		}
 	};
 };
 
@@ -134,6 +140,7 @@ export type ToggleGroupMachine<T extends string> = Readonly<{
 	toggle: (key: T) => void;
 	on: (key: T) => void;
 	off: (key: T) => void;
+	get current(): Record<T, boolean>;
 }>;
 
 /**
@@ -156,93 +163,11 @@ export const toggleGroup = <T extends string>(
 		set,
 		toggle: (key: T) => update((value) => ({ ...value, [key]: !value[key] })),
 		on: (key: T) => update((value) => ({ ...value, [key]: true })),
-		off: (key: T) => update((value) => ({ ...value, [key]: false }))
+		off: (key: T) => update((value) => ({ ...value, [key]: false })),
+		get current() {
+			let value: Record<T, boolean>;
+			subscribe((v) => (value = v))();
+			return value;
+		}
 	};
 };
-
-// type ValidatedStep<T> = {
-// 	step: T;
-// 	validator?: (state: T) => boolean;
-// };
-
-// export const validatedSteps = <T>(
-// 	step: ValidatedStep<T>[],
-// 	options?: StepMachineOptions
-// ) => {
-// 	const { init = 0, loop = false } = options || {};
-
-// 	const { subscribe, set, update } = writable(step[init].step);
-
-// 	const canTransition = (state: T) =>
-// 		step.find((validatedState) =>
-// 			validatedState.step === state
-// 				? !validatedState.validator || validatedState.validator(state)
-// 				: false
-// 		) !== undefined;
-
-// 	return {
-// 		subscribe,
-// 		set,
-// 		next: () => {
-// 			update((state) => {
-// 				const index = step.findIndex((validatedState) => validatedState.step === state);
-// 				let nextIndex = index + 1;
-// 				while (nextIndex < step.length && !canTransition(step[nextIndex].step)) {
-// 					nextIndex++;
-// 				}
-// 				if (nextIndex >= step.length) {
-// 					return loop ? step[0].step : state;
-// 				}
-// 				return step[nextIndex].step;
-// 			});
-// 		},
-// 		prev: () => {
-// 			update((state) => {
-// 				const index = step.findIndex((validatedState) => validatedState.step === state);
-// 				let previousIndex = index - 1;
-// 				while (previousIndex >= 0 && !canTransition(step[previousIndex].step)) {
-// 					previousIndex--;
-// 				}
-// 				if (previousIndex < 0) {
-// 					return loop ? step[step.length - 1].step : state;
-// 				}
-// 				return step[previousIndex].step;
-// 			});
-// 		},
-// 		first: () => {
-// 			const validatedState = step.find(
-// 				(validatedState) => !validatedState.validator || validatedState.validator(step[0].step)
-// 			);
-// 			if (validatedState) {
-// 				set(validatedState.step);
-// 			}
-// 		},
-// 		last: () => {
-// 			const validatedState = step
-// 				.slice()
-// 				.reverse()
-// 				.find(
-// 					(validatedState) =>
-// 						!validatedState.validator || validatedState.validator(step[step.length - 1].step)
-// 				);
-// 			if (validatedState) {
-// 				set(validatedState.step);
-// 			}
-// 		},
-// 		reset: () => set(step[init].step),
-// 		get current() {
-// 			let state;
-// 			subscribe((value) => (state = value))();
-// 			return state;
-// 		},
-// 		get isFirst() {
-// 			return step.findIndex((validatedState) => validatedState.step === this.current) === 0;
-// 		},
-// 		get isLast() {
-// 			return (
-// 				step.findIndex((validatedState) => validatedState.step === this.current) ===
-// 				step.length - 1
-// 			);
-// 		}
-// 	} as const;
-// };

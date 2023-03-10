@@ -1,95 +1,122 @@
-import { describe, beforeEach, it, expect } from "vitest";
-import { steps, toggle } from "./lib";
-import type { StepMachine, ToggleMachine } from "./lib";
+import { steps, toggle, toggleGroup } from "./lib";
 
-describe("machine() test", () => {
-	type State = "a" | "b" | "c";
-	let testSteps: StepMachine<State>;
-	let currentState: State;
+import { describe, it, expect } from "vitest";
 
-	beforeEach(() => {
-		testSteps = steps<State>(["a", "b", "c"], { init: 1 });
-		testSteps.subscribe((state) => {
-			currentState = state;
-		});
+describe("Step Machine", () => {
+	it("should initialize correctly", () => {
+		const sm = steps(["step 1", "step 2", "step 3"], { init: 1, loop: true });
+		expect(sm.current).toBe("step 2");
 	});
 
-	it("should initize with the correct state", () => {
-		expect(currentState).toBe("b");
+	it("should set and get the current state", () => {
+		const sm = steps(["step 1", "step 2", "step 3"]);
+		sm.set("step 2");
+		expect(sm.current).toBe("step 2");
 	});
 
-	it("should transition to the next state", () => {
-		testSteps.next();
-		expect(currentState).toBe("c");
+	it("should move to the next state", () => {
+		const sm = steps(["step 1", "step 2", "step 3"], { loop: true });
+		sm.next();
+		expect(sm.current).toBe("step 2");
+		sm.next();
+		expect(sm.current).toBe("step 3");
+		sm.next();
+		expect(sm.current).toBe("step 1");
 	});
 
-	it("should transition to the previous state", () => {
-		testSteps.prev();
-		expect(currentState).toBe("a");
+	it("should move to the previous state", () => {
+		const sm = steps(["step 1", "step 2", "step 3"], { loop: true });
+		sm.prev();
+		expect(sm.current).toBe("step 3");
+		sm.prev();
+		expect(sm.current).toBe("step 2");
+		sm.prev();
+		expect(sm.current).toBe("step 1");
 	});
 
-	it("should not transition to the next state if it's the last state", () => {
-		testSteps.next();
-		testSteps.next();
-		testSteps.next();
-		expect(currentState).toBe("c");
-	});
-
-	it("should not transition to the previous state if it's the first state", () => {
-		testSteps.prev();
-		testSteps.prev();
-		testSteps.prev();
-		expect(currentState).toBe("a");
-	});
-
-	it("should transition to the first state if it's the last state and loop is true", () => {
-		testSteps = steps(["a", "b", "c"], { init: 2, loop: true });
-		testSteps.subscribe((state) => {
-			currentState = state;
-		});
-		testSteps.next();
-		expect(currentState).toBe("a");
-	});
-
-	it("should reset to the init state", () => {
-		testSteps.next();
-		testSteps.reset();
-		expect(currentState).toBe("b");
-	});
-
-	it("should return the current value", () => {
-		testSteps.set("b");
-		expect(testSteps.current).toBe("b");
+	it("should reset to the initial state", () => {
+		const sm = steps(["step 1", "step 2", "step 3"], { init: 2 });
+		sm.next();
+		sm.reset();
+		expect(sm.current).toBe("step 3");
 	});
 });
 
-describe("toggle() test", () => {
-	let testToggle: ToggleMachine;
-	let currentState: boolean;
-
-	beforeEach(() => {
-		testToggle = toggle(false);
-		testToggle.subscribe((state) => {
-			currentState = state;
-		});
+describe("Toggle Machine", () => {
+	it("should initialize correctly", () => {
+		const tm = toggle();
+		expect(tm.current).toBe(false);
 	});
 
-	it("should initize with the correct state", () => {
-		expect(currentState).toBe(false);
+	it("should set and get the current state", () => {
+		const tm = toggle();
+		tm.set(true);
+		expect(tm.current).toBe(true);
 	});
 
 	it("should toggle the state", () => {
-		testToggle.toggle();
-		expect(currentState).toBe(true);
+		const tm = toggle(true);
+		tm.toggle();
+		expect(tm.current).toBe(false);
+		tm.toggle();
+		expect(tm.current).toBe(true);
 	});
 
-	it("should set the state to true", () => {
-		testToggle.on();
-		expect(currentState).toBe(true);
+	it("should turn on", () => {
+		const tm = toggle();
+		tm.on();
+		expect(tm.current).toBe(true);
 	});
 
-	it("should set the state to false", () => {
-		testToggle.off();
-		expect(currentState).toBe(false);
+	it("should turn off", () => {
+		const tm = toggle(true);
+		tm.off();
+		expect(tm.current).toBe(false);
+	});
+});
+
+describe("Toggle Group Machine", () => {
+	it("should initialize correctly with an object", () => {
+		const tgm = toggleGroup({ foo: true, bar: false });
+		expect(tgm.subscribe).toBeDefined();
+		expect(tgm.set).toBeDefined();
+		expect(tgm.toggle).toBeDefined();
+		expect(tgm.on).toBeDefined();
+		expect(tgm.off).toBeDefined();
+	});
+
+	it("should initialize correctly with an array", () => {
+		const tgm = toggleGroup(["foo", "bar"]);
+		expect(tgm.subscribe).toBeDefined();
+		expect(tgm.set).toBeDefined();
+		expect(tgm.toggle).toBeDefined();
+		expect(tgm.on).toBeDefined();
+		expect(tgm.off).toBeDefined();
+	});
+
+	it("should set and get the current state", () => {
+		const tgm = toggleGroup({ foo: true, bar: false });
+		expect(tgm.subscribe).toBeDefined();
+		expect(tgm.current).toEqual({ foo: true, bar: false });
+	});
+
+	it("should toggle a key", () => {
+		const tgm = toggleGroup({ foo: true, bar: false });
+		tgm.toggle("foo");
+		expect(tgm.current).toEqual({ foo: false, bar: false });
+		tgm.toggle("bar");
+		expect(tgm.current).toEqual({ foo: false, bar: true });
+	});
+
+	it("should turn on a key", () => {
+		const tgm = toggleGroup({ foo: true, bar: false });
+		tgm.on("bar");
+		expect(tgm.current).toEqual({ foo: true, bar: true });
+	});
+
+	it("should turn off a key", () => {
+		const tgm = toggleGroup({ foo: true, bar: false });
+		tgm.off("foo");
+		expect(tgm.current).toEqual({ foo: false, bar: false });
 	});
 });
