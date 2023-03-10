@@ -1,5 +1,11 @@
 # svelte-machinery
 
+## 1.2.2
+
+### Patch Changes
+
+- fixed package.json ci
+
 ## 1.2.1
 
 ### Patch Changes
