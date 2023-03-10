@@ -1,5 +1,11 @@
 # svelte-machinery
 
+## 1.2.3
+
+### Patch Changes
+
+- 1da3347: fixed package.json and workflow secret access
+
 ## 1.2.2
 
 ### Patch Changes
