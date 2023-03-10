@@ -26,23 +26,6 @@ jobs:
       - name: Run CI checks
         run: npm run ci
 
-      - name: Run changeset
-        run: npm run changeset:version
-
-      - name: Commit changeset
-        uses: EndBug/add-and-commit@v7
-        with:
-          message: "Update package version"
-          add: "package.json pnpm-lock.yaml .changeset"
-          push: true
-
-      - name: Commit format
-        uses: EndBug/add-and-commit@v7
-        with:
-          message: "Format code"
-          add: "src/**/*"
-          push: true
-
       - name: Create pull request
         uses: peter-evans/create-pull-request@v3
         with:
