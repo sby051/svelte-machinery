@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Run format
+        run: npm run format
+
       - name: Run CI checks
         run: npm run ci
 
@@ -29,15 +32,15 @@ jobs:
       - name: Commit changeset
         uses: EndBug/add-and-commit@v7
         with:
-          message: 'Update package version'
-          add: 'package.json yarn.lock .yarn/versions/*'
-        
-      - name: Push changeset
-        uses:
-          EndBug/add-and-commit@v7
+          message: "Update package version"
+          add: "package.json pnpm-lock.yaml .changeset"
+          push: true
+
+      - name: Commit format
+        uses: EndBug/add-and-commit@v7
         with:
-          message: 'Update package version'
-          add: 'package.json yarn.lock .yarn/versions/*'
+          message: "Format code"
+          add: "src/**/*"
           push: true
 
       - name: Create pull request
