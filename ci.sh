@@ -22,6 +22,19 @@ if [ "$version" != "$latest" ]; then
 fi
 
 # if we get here, then the version is in the changelog
+
+# we want to see if there are any commited changes to the working tree
+# if there are, then we want to fail the build
+# if there are not, then we want to continue
+if [ -n "$(git status --porcelain)" ]; then
+  echo "[CI-ALERT] :: [$(date +%x)] -> There are uncommitted changes in the working tree.
+[!] CI cannot continue without a clean working tree.
+[!] Please commit your changes and try again.
+[!] Exiting with error code 1.
+  "
+  exit 1
+fi
+
 echo "Version in package.json ($version) matches latest entry in CHANGELOG.md ($latest)
 
 [+] CI can continue.

@@ -1,13 +1,35 @@
 {
 	"name": "svelte-machinery",
 	"description": "A collection of state machines for Svelte",
+	"displayName": "Svelte Machinery",
+	"homepage": "https://svelte-machinery.sby051.live",
+	"bugs": {
+		"url": "https://svelte-machinery.sby051.live/bugs"
+	},
 	"author": "sby051",
 	"version": "1.2.2",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/sby051/svelte-machinery.git"
+	},
+	"keywords": [
+		"svelte",
+		"state machine",
+		"state machines",
+		"svelte state machine",
+		"svelte state machines",
+		"svelte toggle machine",
+		"svelte toggle machines",
+		"svelte toggle",
+		"svelte toggles",
+		"sveltekit state machine",
+		"sveltekit state machines"
+	],
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
 		"preview": "vite preview",
-		"publish": "npm publish --access public",
 		"package": "svelte-kit sync && svelte-package && publint",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
